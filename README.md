@@ -11,13 +11,13 @@ The official Node.js client for CEX.IO Exchange Plus API (https://docs.plus.cex.
 ## Installation
 
 ```bash
-npm install cexio-exchange-plus
+npm install @cex-io/cexio-exchange-plus
 ```
 
 ## Rest client
 
 ```js
-const { RestClient } = require('cexio-exchange-plus')
+const { RestClient } = require('@cex-io/cexio-exchange-plus')
 const defaultClient = new RestClient()
 const authenticatedClient = new RestClient(apiKey, apiSecret, options)
 ```
@@ -47,7 +47,7 @@ If some error was occurred then method rejects with status code and error descri
 For more details check [api reference](https://docs.plus.cex.io).
 
 ```js
-const { RestClient } = require('cexio-exchange-plus')
+const { RestClient } = require('@cex-io/cexio-exchange-plus')
 
 const client = new RestClient()
 
@@ -69,7 +69,7 @@ try {
 To make private api calls use `async callPrivate(action, params)`. It's similar to public method but requires `apiKey` and `apiSecret` arguments to client initialization. Each private request is signed with `HMAC sha256` so if key is incorrect or signature is wrong client will return rejected promise with error like this `{ error: 'Authorization Failed', statusCode: 401 }`
 
 ```js
-const { RestClient } = require('cexio-exchange-plus')
+const { RestClient } = require('@cex-io/cexio-exchange-plus')
 
 const key = '_account_api_key_'
 const secret = '_account_api_secret_'
@@ -97,7 +97,7 @@ Success response example:
 ## WebSocket client
 
 ```js
-const { WebsocketClient } = require('cexio-exchange-plus')
+const { WebsocketClient } = require('@cex-io/cexio-exchange-plus')
 const ws = new WebsocketClient(apiKey, apiSecret, options)
 ```
 
@@ -120,7 +120,7 @@ To send request to the server you need to connect and auth first. Everything is 
 If some error was occurred then method rejects with status code and error description.
 
 ```js
-  const { WebsocketClient } = require('cexio-exchange-plus')
+  const { WebsocketClient } = require('@cex-io/cexio-exchange-plus')
   const ws = new WebsocketClient(apiKey, apiSecret, options)
 
   await ws.connect() // connect and auth on the server
@@ -135,7 +135,7 @@ If some error was occurred then method rejects with status code and error descri
 The WebsocketClient allows you to receive updates. At the now available two types of updates `account_update` and `executionReport`. You can get more details about them in [documentation](https://docs.plus.cex.io/#websocket-private-api-calls-account-events).
 
 ```js
-const { WebsocketClient } = require('cexio-exchange-plus')
+const { WebsocketClient } = require('@cex-io/cexio-exchange-plus')
 const ws = new WebsocketClient(apiKey, apiSecret)
 
 try {
