@@ -22,7 +22,7 @@ const defaultClient = new RestClient()
 const authenticatedClient = new RestClient(apiKey, apiSecret, options)
 ```
 
-Arguments for RestClient are optional. For private actions you need to obtain apiKey + apiSecret pair from your manager.
+Arguments for RestClient are optional. For private actions you need to generate apiKey and apiSecret pair from UI terminal.
 
 - `apiKey` _string_ - Api key for specific account.
 - `apiSecret` _string_ - Api secret for specific account.
@@ -102,7 +102,7 @@ const { WebsocketClient } = require('@cex-io/cexio-exchange-plus')
 const ws = new WebsocketClient(apiKey, apiSecret, options)
 ```
 
-To init the WebsocketClient you must pass `apiKey` and `apiSecret` arguments. You can obtain them from your manager.
+To init the WebsocketClient you must pass `apiKey` and `apiSecret` arguments. You can generate them in UI terminal.
 
 - `apiKey` _string_ - Api key for specific account.
 - `apiSecret` _string_ - Api secret for specific account.
@@ -134,7 +134,7 @@ If some error was occurred then method rejects with status code and error descri
 ```
 
 ### Subscribe to updates
-The WebsocketClient allows you to receive updates. At the now available two types of updates `account_update` and `executionReport`. You can get more details about them in [documentation](https://docs.plus.cex.io/#websocket-private-api-calls-account-events).
+The WebsocketClient allows you to receive updates. The following types of updates are available: `account_update`, `executionReport`, `order_book_increment`, `tradeUpdate`, etc. You can get more details about them in [documentation](https://docs.plus.cex.io/#websocket-private-api-calls-account-events).
 
 ```js
 const { WebsocketClient } = require('@cex-io/cexio-exchange-plus')
