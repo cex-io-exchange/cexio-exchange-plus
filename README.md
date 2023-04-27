@@ -113,8 +113,8 @@ Available client options described below, they all are optional:
 - `wsReplyTimeout` _integer_ - Request timeout in milliseconds. Default is 30000.
 - `rejectUnauthorized` _boolean_ - This option useful when you test demo env. Default is true.
 - `host` _string_ - Can be changed to test your bot on demo environment. Default is 'wss://api.plus.cex.io/'
-- `apiUrlPublic` _string_ - Use a concrete url for public API calls. This option overrides `host` value. Default is 'https://api.plus.cex.io/rest-public/'
-- `apiUrl` _string_ - Use a concrete url for private API calls. This option overrides `host` value. Default is 'https://api.plus.cex.io/rest/'
+- `apiUrlPublic` _string_ - Use a concrete url for public WS calls. This option overrides `host` value. Default is 'wss://api.plus.cex.io/ws-public/'
+- `apiUrl` _string_ - Use a concrete url for private WS calls. This option overrides `host` value. Default is 'wss://api.plus.cex.io/ws/'
 
 
 ### Call Private actions
