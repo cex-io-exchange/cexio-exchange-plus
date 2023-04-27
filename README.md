@@ -30,12 +30,13 @@ Arguments for RestClient are optional. For private actions you need to obtain ap
 
 Available client options described below, they all are optional:
 
-- `apiLimit` _integer_ - Rate limit value for apiKey, default is 300.
+- `apiLimit` _integer_ - Rate limit value for apiKey. Default is 300.
   Client will check requests count and prevent from spam the server. You can ask to increase this limit.
-- `timeout` _integer_ - Request timeout in milliseconds, default is 30000.
-- `rejectUnauthorized` _boolean_ - This option useful when you test demo env, default is true.
-- `host` _string_ - Can be changed to test your bot on demo environment.
-  default is 'https://api.plus.cex.io/'
+- `timeout` _integer_ - Request timeout in milliseconds. Default is 30000.
+- `rejectUnauthorized` _boolean_ - This option useful when you test demo env. Default is true.
+- `host` _string_ - Can be changed to test your bot on demo environment. Default is 'https://api.plus.cex.io/'
+- `apiUrlPublic` _string_ - Use a concrete url for public API calls. This option overrides `host` value. Default is 'https://api.plus.cex.io/rest-public/'
+- `apiUrl` _string_ - Use a concrete url for private API calls. This option overrides `host` value. Default is 'https://api.plus.cex.io/rest/'
 
 
 ### Public actions
@@ -109,10 +110,11 @@ To init the WebsocketClient you must pass `apiKey` and `apiSecret` arguments. Yo
 
 Available client options described below, they all are optional:
 
-- `wsReplyTimeout` _integer_ - Request timeout in milliseconds, default is 30000.
-- `rejectUnauthorized` _boolean_ - This option useful when you test demo env, default is true.
-- `host` _string_ - Can be changed to test your bot on demo environment.
-  default is 'wss://api.plus.cex.io/'
+- `wsReplyTimeout` _integer_ - Request timeout in milliseconds. Default is 30000.
+- `rejectUnauthorized` _boolean_ - This option useful when you test demo env. Default is true.
+- `host` _string_ - Can be changed to test your bot on demo environment. Default is 'wss://api.plus.cex.io/'
+- `apiUrlPublic` _string_ - Use a concrete url for public API calls. This option overrides `host` value. Default is 'https://api.plus.cex.io/rest-public/'
+- `apiUrl` _string_ - Use a concrete url for private API calls. This option overrides `host` value. Default is 'https://api.plus.cex.io/rest/'
 
 
 ### Call Private actions

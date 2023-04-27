@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/cex-io-exchange/cexio-exchange-plus",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "keywords": [
     "API",
