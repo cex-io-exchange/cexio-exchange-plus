@@ -1,6 +1,6 @@
 {
   "name": "@cex-io/cexio-exchange-plus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The official Node.js client for CEX.IO Exchange Plus API",
   "main": "index.js",
   "directories": {
