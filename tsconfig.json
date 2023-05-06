@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "ignoreDeprecations": "5.0",
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "outDir": "./lib",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "lib": ["dom", "es2015", "es2016"],
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "noEmitHelpers": false,
+    "importHelpers": false,
+    "strict": true,
+    "jsx": "preserve",
+    "noImplicitReturns": true,
+    "skipLibCheck": true
+  },
+  "files": [
+    "src/index.ts"
+  ],
+  "exclude": [
+    "lib",
+    "node_modules"
+  ]
+}
