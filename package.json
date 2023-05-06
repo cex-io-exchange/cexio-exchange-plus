@@ -2,9 +2,10 @@
   "name": "@cex-io/cexio-exchange-plus",
   "version": "1.0.2",
   "description": "The official Node.js client for CEX.IO Exchange Plus API",
-  "main": "index.js",
+  "main": "lib/index.js",
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "src": "src"
   },
   "repository": {
     "type": "git",
@@ -30,11 +31,18 @@
   ],
   "author": "cex.io",
   "license": "MIT",
+  "scripts": {
+    "postinstall": "husky install"
+  },
   "dependencies": {
+    "husky": "^8.0.3",
     "node-fetch": "^2.6.9",
+    "typescript": "^5.0.4",
     "ws": "^8.13.0"
   },
   "devDependencies": {
+    "@types/node-fetch": "^2.6.3",
+    "@types/ws": "^8.5.4",
     "log4js": "^6.9.1",
     "standard": "^14.3.4"
   }

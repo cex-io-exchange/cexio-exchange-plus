@@ -19,3 +19,6 @@ xunit.xml
 
 # OS files
 .DS_Store
+
+# transpiled script
+lib/

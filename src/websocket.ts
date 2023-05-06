@@ -1,31 +1,20 @@
-const WebSocket = require('ws')
-const crypto = require('crypto')
+import { Defer, Handlers, MessageOidReply } from './types/ws';
+import { EventCallback, OnClose, OnError } from './types/callbacks';
+import WebSocket from 'ws';
+import crypto from 'crypto';
+import { WebSocketOptions } from './types/options';
 
 class WebsocketClient {
-  #apiKey
-  #apiSecret
+  #apiKey?: string
+  #apiSecret?: string
   #oidSeqId
-  #handlers
+  #handlers: Handlers
   #waitForResp
   #waitTimers
   #isAuthorized
   #isPublicClient
-  #options
-  #socket
-
-  /**
-   * @typedef WebSocketOptions
-   * @type {Object}
-   * @property {number=} wsReplyTimeout - Request timeout in milliseconds. Default is 30000.
-   * @property {boolean=} rejectUnauthorized - This option useful when you test demo env. Default is true.
-   * @property {string=} host - Can be changed to test your bot on demo environment.
-   *   Default is 'wss://api.plus.cex.io/'
-   * @property {string=} apiUrlPublic - Use a concrete url for public WS calls. This option overrides `host` value.
-   *   Default is 'wss://api.plus.cex.io/ws-public/'
-   * @property {string=} host - Use a concrete url for private WS calls. This option overrides `host` value.
-   *   Default is 'wss://api.plus.cex.io/ws/'
-   * @property {function=} log - Function for logging client info
-   */
+  #options: WebSocketOptions
+  #socket?: WebSocket
 
   /**
    * Create a new CEX.IO Exchange Plus WebSocket client.
@@ -34,7 +23,7 @@ class WebsocketClient {
    * @param {string=} apiSecret client's api secret
    * @param {WebSocketOptions=} options connection options
    */
-  constructor (apiKey, apiSecret, options = {}) {
+  constructor (apiKey?: string, apiSecret?: string, options: Partial<WebSocketOptions> = {}) {
     this.#apiKey = apiKey
     this.#apiSecret = apiSecret
 
@@ -51,23 +40,28 @@ class WebsocketClient {
       this.#isPublicClient = true
     }
 
-    this.#options = Object.assign({
+    this.#options = {
       log: () => {},
       wsReplyTimeout: 30000,
       rejectUnauthorized: true,
-      host: 'wss://api.plus.cex.io/'
-    }, _options)
+      host: 'wss://api.plus.cex.io/',
+      // prepare the overridable values
+      apiUrl: `${options.host}ws`,
+      apiUrlPublic: `${options.host}ws-public`,
+
+      ..._options
+    }
 
     if (!this.#options.host.endsWith('/')) {
       this.#options.host = `${this.#options.host}/`
     }
 
-    if (!this.#options.apiUrl) {
-      this.#options.apiUrl = `${this.#options.host}ws`
+    if (!this.#options.apiUrl.endsWith('/')) {
+      this.#options.apiUrl = `${this.#options.apiUrl}/`
     }
 
-    if (!this.#options.apiUrlPublic) {
-      this.#options.apiUrlPublic = `${this.#options.host}ws-public`
+    if (!this.#options.apiUrlPublic.endsWith('/')) {
+      this.#options.apiUrlPublic = `${this.#options.apiUrlPublic}/`
     }
   }
 
@@ -76,7 +70,7 @@ class WebsocketClient {
    * @param {function=} onClose callback on socket close
    * @param {function=} onError callback on socket error
    */
-  connect (onClose, onError) {
+  connect (onClose: OnClose, onError: OnError): Promise<void> {
     return new Promise((resolve, reject) => {
       const endpoint = this.#isPublicClient
         ? this.#options.apiUrlPublic
@@ -108,7 +102,7 @@ class WebsocketClient {
 
       this.#socket.on('message', this.#handleMessage.bind(this))
 
-      this.#socket.on('close', (err) => {
+      this.#socket.on('close', (err?: Error) => {
         this.#socket = undefined
         this.#isAuthorized = false
         this.#cancelAllOidReplies(err)
@@ -116,7 +110,7 @@ class WebsocketClient {
         if (onClose) onClose(err)
       })
 
-      this.#socket.on('error', (err) => {
+      this.#socket.on('error', (err: Error) => {
         this.#socket = undefined
         this.#cancelAllOidReplies(err)
         reject(err)
@@ -134,12 +128,15 @@ class WebsocketClient {
     }
   }
 
-  #createSignature (timestamp) {
+  #createSignature (timestamp: number) {
     const data = `${timestamp}${this.#apiKey}`
+    this.#options.log('signature params:', data)
+    if (!this.#apiSecret) throw 'No apiSecret set'
+
     return crypto.createHmac('sha256', this.#apiSecret).update(data).digest('hex')
   }
 
-  #auth () {
+  #auth (): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.#socket || this.#socket.readyState !== WebSocket.OPEN) {
         return reject(new Error('Client is not connected'))
@@ -172,7 +169,7 @@ class WebsocketClient {
     })
   }
 
-  #handleMessage (dataStr) {
+  #handleMessage (dataStr: string) {
     const message = JSON.parse(dataStr)
     this.#options.log('incoming message:', message)
 
@@ -186,7 +183,7 @@ class WebsocketClient {
     }
   }
 
-  #handleOidReply (message) {
+  #handleOidReply (message: MessageOidReply) {
     if (this.#waitForResp[message.oid] === undefined) {
       this.#options.log(
         'Got message from server with oid but without handler on client side.',
@@ -208,7 +205,7 @@ class WebsocketClient {
     }
   }
 
-  #cancelAllOidReplies (err) {
+  #cancelAllOidReplies (err?: Error|string) {
     Object.keys(this.#waitForResp).forEach(oid => {
       this.#waitForResp[oid].reject({
         oid,
@@ -220,7 +217,7 @@ class WebsocketClient {
     })
   }
 
-  #cancelOidReply (oid, reason) {
+  #cancelOidReply (oid: string, reason: string) {
     if (this.#waitForResp[oid]) {
       this.#waitForResp[oid].reject({
         oid,
@@ -239,16 +236,22 @@ class WebsocketClient {
    * @param {string} event account_update || executionReport || order_book_subscribe || etc.
    * @param {function} callback function to receive updates messages
    */
-  subscribe (event, callback) {
+  subscribe (event: string, callback: EventCallback) {
     this.#addHandler(event, callback)
   }
 
-  #addHandler (event, callback) {
+  #addHandler (event: string, callback: EventCallback) {
     this.#handlers[event] = callback
   }
 
-  #getDefer () {
-    const defer = {}
+  /**
+   * Create a defer holder. Currently accepting anything but for validation, will need
+   * type validation and check up
+   * 
+   * @returns a defer holder
+   */
+  #getDefer (): Defer<any> {
+    const defer: any = {}
     defer.promise = new Promise((resolve, reject) => {
       defer.resolve = resolve
       defer.reject = reject
@@ -274,7 +277,7 @@ class WebsocketClient {
    * @param {object} params method parameters
    * @returns Promise<Object>
    */
-  async callPublic (method, params = {}) {
+  async callPublic (method: string, params = {}) {
     if (!this.#isPublicClient) {
       throw new Error('Attempt to call public method on private client')
     }
@@ -288,7 +291,7 @@ class WebsocketClient {
    * @param {object} params method parameters
    * @returns Promise<Object>
    */
-  async callPrivate (method, params = {}) {
+  async callPrivate (method: string, params = {}) {
     if (this.#isPublicClient) {
       throw new Error('Attempt to call private method on public client')
     }
@@ -300,7 +303,7 @@ class WebsocketClient {
     return this.#callRequest(method, params)
   }
 
-  async #callRequest (method, params = {}) {
+  async #callRequest (method: string, params = {}) {
     if (!this.#socket || this.#socket.readyState !== WebSocket.OPEN) {
       throw new Error('Not connected')
     }
@@ -333,4 +336,4 @@ class WebsocketClient {
   }
 }
 
-module.exports = WebsocketClient
+export default WebsocketClient;
