@@ -1,3 +1,6 @@
+# 2024-02-07 Repository Deprecated And Archived
+Following the recent rebrand of CEX.IO Exchange Plus to CEX.IO Spot Trading, new repository for the official the official Node.js client for CEX.IO Spot Trading API was created https://github.com/cex-io-exchange/cexio-spot-trading
+
 # CEX.IO Exchange Plus
 
 The official Node.js client for CEX.IO Exchange Plus API (https://docs.plus.cex.io)
